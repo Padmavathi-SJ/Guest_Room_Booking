@@ -7,6 +7,7 @@ import {
 import path from 'path';
 import fs from 'fs';
 
+
 export const addHouseDetails = async (req, res) => {
     try {
         // Handle file upload
@@ -136,10 +137,14 @@ export const fetchHouseDetails = async (req, res) => {
   }
 };
 
+
 export const editHouseDetails = async (req, res) => {
   try {
     const { house_id } = req.params;
-    const updateData = req.body;
+    const updateData = {
+      ...req.body,
+      house_img: req.file ? req.file.filename : req.body.house_img
+    };
 
     // Validate house_id
     if (!house_id || isNaN(parseInt(house_id))) {
@@ -151,20 +156,30 @@ export const editHouseDetails = async (req, res) => {
 
     // Basic validation
     if (!updateData.house_name || !updateData.house_location) {
+      // Remove uploaded file if validation fails
+      if (req.file) {
+        fs.unlinkSync(req.file.path);
+      }
       return res.status(400).json({
         status: false,
         message: "House name and location are required"
       });
     }
 
-    await updateHouseDetails(house_id, updateData);
+    const result = await updateHouseDetails(house_id, updateData);
 
     return res.status(200).json({
       status: true,
-      message: "House updated successfully"
+      message: "House updated successfully",
+      data: result
     });
 
   } catch (error) {
+    // Remove uploaded file if error occurs
+    if (req.file) {
+      fs.unlinkSync(req.file.path);
+    }
+    
     return res.status(500).json({
       status: false,
       message: error.message || "Failed to update house details",
@@ -172,3 +187,6 @@ export const editHouseDetails = async (req, res) => {
     });
   }
 };
+
+
+

@@ -55,6 +55,7 @@ router.get('/:owner_id/houses', listOwnerHouses);
 router.get('/get_house/:house_id', fetchHouseDetails);
 
 // UPDATE house details
-router.put('/edit/:house_id', editHouseDetails);
+router.put('/edit/:house_id', upload.single('house_img'), editHouseDetails);
+
 
 export default router;

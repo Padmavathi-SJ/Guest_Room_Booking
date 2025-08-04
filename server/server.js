@@ -11,12 +11,14 @@ import OwnerRoomsRouter from './Routers/house_owners/room_details.js';
 import RoomPicturesRouter from './Routers/house_owners/room_pictures.js';
 import OwnerRoomBookingDetails from './Routers/house_owners/room_booking.js';
 import DashboardRouter from './Routers/house_owners/dashboard.js'; 
+import ProfileRouter from './Routers/house_owners/profile.js';
 
 import UserLoginRouter from './Routers/customers/login.js';
 import GetHousesRouter from './Routers/customers/house_details.js';
 import RoomBooking from './Routers/customers/room_booking.js';
 import GetRoomsRouter from './Routers/customers/room_details.js';
 import GetBookedRooms from './Routers/customers/get_booked_rooms.js';
+import UserProfile from './Routers/customers/profile.js';
 
 // Configure dotenv
 dotenv.config();
@@ -63,6 +65,7 @@ app.use('/api/owner', OwnerRoomsRouter);
 app.use('/api/owner', RoomPicturesRouter);
 app.use('/api/owner', OwnerRoomBookingDetails);
 app.use('/api/owner', DashboardRouter);
+app.use('/api/owner', ProfileRouter);
 
 
 app.use('/api/user', UserLoginRouter);
@@ -70,6 +73,7 @@ app.use('/api/user', GetHousesRouter);
 app.use('/api/user', RoomBooking);
 app.use('/api/user', GetRoomsRouter);
 app.use('/api/user', GetBookedRooms);
+app.use('/api/user', UserProfile);
 
 
 app.listen(5000, () => {

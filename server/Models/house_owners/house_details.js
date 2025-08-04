@@ -87,6 +87,7 @@ export const getHouseDetails = (house_id) => {
   });
 };
 
+
 export const updateHouseDetails = (house_id, updateData) => {
   return new Promise((resolve, reject) => {
     const query = `
@@ -122,3 +123,6 @@ export const updateHouseDetails = (house_id, updateData) => {
     });
   });
 };
+
+
+
