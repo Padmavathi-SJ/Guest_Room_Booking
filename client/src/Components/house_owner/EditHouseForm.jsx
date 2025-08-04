@@ -26,7 +26,7 @@ const EditHouse = () => {
     const fetchHouse = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`http://localhost:5000/api/houses/get_house/${house_id}`);
+        const response = await axios.get(`http://localhost:5000/api/owner/get_house/${house_id}`);
         
         if (response.data.status !== true) {
           throw new Error(response.data.message || 'Failed to fetch house details');
@@ -69,49 +69,52 @@ const EditHouse = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    setSuccess('');
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setError('');
+  setSuccess('');
 
-    try {
-      const formDataToSend = new FormData();
-      
-      // Append all form fields
-      Object.entries(formData).forEach(([key, value]) => {
-        formDataToSend.append(key, value);
-      });
-      
-      // Append the image file if selected
-      if (selectedFile) {
-        formDataToSend.append('house_img', selectedFile);
-      }
-
-      const response = await axios.put(
-        `http://localhost:5000/api/houses/edit/${house_id}`,
-        formDataToSend,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        }
-      );
-
-      if (response.data.status !== true) {
-        throw new Error(response.data.message || 'Failed to update house');
-      }
-
-      setSuccess('House updated successfully!');
-      setTimeout(() => navigate('/owner/houses'), 1500);
-    } catch (err) {
-      console.error('Update error:', err);
-      setError(err.response?.data?.message || err.message || 'Failed to update house');
-    } finally {
-      setLoading(false);
+  try {
+    const formDataToSend = new FormData();
+    
+    // Append all form fields
+    formDataToSend.append('house_name', formData.house_name);
+    formDataToSend.append('total_rooms', formData.total_rooms);
+    formDataToSend.append('house_location', formData.house_location);
+    formDataToSend.append('city', formData.city);
+    formDataToSend.append('state', formData.state);
+    formDataToSend.append('availability', formData.availability);
+    
+    // Only append the image if a new one was selected
+    if (selectedFile) {
+      formDataToSend.append('house_img', selectedFile);
     }
-  };
+
+    const response = await axios.put(
+      `http://localhost:5000/api/owner/edit/${house_id}`,
+      formDataToSend,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+    );
+
+    if (response.data.status !== true) {
+      throw new Error(response.data.message || 'Failed to update house');
+    }
+
+    setSuccess('House updated successfully!');
+    setTimeout(() => navigate('/owner/my_houses'), 1500);
+  } catch (err) {
+    console.error('Update error:', err);
+    setError(err.response?.data?.message || err.message || 'Failed to update house');
+  } finally {
+    setLoading(false);
+  }
+};
 
   if (loading && !formData.house_name) {
     return (
@@ -307,7 +310,7 @@ const EditHouse = () => {
           <div className="flex gap-4 pt-4">
             <button
               type="button"
-              onClick={() => navigate('/owner/houses')}
+              onClick={() => navigate('/owner/my_houses')}
               className="flex-1 px-6 py-3 bg-slate-200 hover:bg-slate-300 text-slate-800 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2"
             >
               <FaTimes /> Cancel
