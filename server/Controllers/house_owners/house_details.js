@@ -1,6 +1,8 @@
 import { 
     insertHouseDetails,
-    getOwnerHouses
+    getOwnerHouses,
+    getHouseDetails,
+    updateHouseDetails
  } from '../../Models/house_owners/house_details.js';
 import path from 'path';
 import fs from 'fs';
@@ -100,6 +102,72 @@ export const listOwnerHouses = async (req, res) => {
     return res.status(500).json({
       status: false,
       message: "Failed to fetch houses",
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
+export const fetchHouseDetails = async (req, res) => {
+  try {
+    const { house_id } = req.params;
+
+    // Validate house_id
+    if (!house_id || isNaN(parseInt(house_id))) {
+      return res.status(400).json({
+        status: false,
+        message: "Invalid house ID"
+      });
+    }
+
+    const house = await getHouseDetails(house_id);
+
+    return res.status(200).json({
+      status: true,
+      message: "House details fetched successfully",
+      data: house
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: error.message || "Failed to fetch house details",
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
+export const editHouseDetails = async (req, res) => {
+  try {
+    const { house_id } = req.params;
+    const updateData = req.body;
+
+    // Validate house_id
+    if (!house_id || isNaN(parseInt(house_id))) {
+      return res.status(400).json({
+        status: false,
+        message: "Invalid house ID"
+      });
+    }
+
+    // Basic validation
+    if (!updateData.house_name || !updateData.house_location) {
+      return res.status(400).json({
+        status: false,
+        message: "House name and location are required"
+      });
+    }
+
+    await updateHouseDetails(house_id, updateData);
+
+    return res.status(200).json({
+      status: true,
+      message: "House updated successfully"
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: error.message || "Failed to update house details",
       error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }

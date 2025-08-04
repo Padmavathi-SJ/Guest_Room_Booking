@@ -37,7 +37,6 @@ export const getRecentPendingBookings = (owner_id) => {
         br.from_time,
         br.to_time,
         br.booking_status,
-        hd.house_id,  // Add this line to include house_id
         hd.house_name,
         hd.house_location,
         rd.room_name,

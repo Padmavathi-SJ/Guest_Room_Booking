@@ -68,3 +68,57 @@ export const getOwnerHouses = (owner_id, availability = null) => {
     });
   });
 };
+
+
+export const getHouseDetails = (house_id) => {
+  return new Promise((resolve, reject) => {
+    const query = `
+      SELECT * FROM house_details 
+      WHERE house_id = ?
+    `;
+    
+    db.query(query, [house_id], (err, result) => {
+      if (err) return reject(err);
+      if (result.length === 0) {
+        return reject({ message: "House not found" });
+      }
+      resolve(result[0]);
+    });
+  });
+};
+
+export const updateHouseDetails = (house_id, updateData) => {
+  return new Promise((resolve, reject) => {
+    const query = `
+      UPDATE house_details 
+      SET 
+        house_name = ?,
+        total_rooms = ?,
+        house_location = ?,
+        house_img = ?,
+        availability = ?,
+        city = ?,
+        state = ?
+      WHERE house_id = ?
+    `;
+    
+    const values = [
+      updateData.house_name,
+      updateData.total_rooms,
+      updateData.house_location,
+      updateData.house_img,
+      updateData.availability,
+      updateData.city,
+      updateData.state,
+      house_id
+    ];
+
+    db.query(query, values, (err, result) => {
+      if (err) return reject(err);
+      if (result.affectedRows === 0) {
+        return reject({ message: "House not found or no changes made" });
+      }
+      resolve({ message: "House updated successfully" });
+    });
+  });
+};

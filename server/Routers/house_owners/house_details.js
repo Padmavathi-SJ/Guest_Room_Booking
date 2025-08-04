@@ -1,6 +1,8 @@
 import express from 'express';
 import { addHouseDetails,
-        listOwnerHouses
+        listOwnerHouses,
+        fetchHouseDetails,
+        editHouseDetails
  } from '../../Controllers/house_owners/house_details.js';
 import multer from 'multer';
 import path from 'path';
@@ -48,5 +50,11 @@ const upload = multer({
 router.post('/add_house', upload.single('house_img'), addHouseDetails);
 
 router.get('/:owner_id/houses', listOwnerHouses);
+
+// GET house details
+router.get('/get_house/:house_id', fetchHouseDetails);
+
+// UPDATE house details
+router.put('/edit/:house_id', editHouseDetails);
 
 export default router;
