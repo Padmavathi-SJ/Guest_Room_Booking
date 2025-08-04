@@ -9,12 +9,13 @@ import {
  FaTimes 
 } from 'react-icons/fa';
 
-const Sidebar = () => {
- const [isOpen, setIsOpen] = useState(true);
+const Sidebar = ({isOpen, setIsOpen}) => {
+  const toggleSidebar = () => setIsOpen(!isOpen);
+// const [isOpen, setIsOpen] = useState(true);
  const [activeItem, setActiveItem] = useState('dashboard');
  const navigate = useNavigate();
 
- const toggleSidebar = () => setIsOpen(!isOpen);
+ 
 
  const handleLogout = () => {
    // Add your logout logic here
@@ -30,12 +31,12 @@ const Sidebar = () => {
 
  return (
    <div className={`
-     fixed left-0 top-0 h-screen 
-     ${isOpen ? 'w-60' : 'w-16'} 
-     bg-white border-r border-gray-200 shadow-sm
-     transition-all duration-300 ease-in-out
-     z-50 flex flex-col
-   `}>
+  fixed left-0 top-0 h-screen
+  ${isOpen ? 'w-60' : 'w-16'}
+  bg-white border-r border-gray-200 shadow-sm
+  transition-all duration-300 ease-in-out
+  z-50 flex flex-col
+`}>
      {/* Toggle Button */}
      <div 
        className="flex justify-end p-3 cursor-pointer hover:bg-gray-50 border-b border-gray-100"

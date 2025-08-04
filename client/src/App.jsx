@@ -18,6 +18,7 @@ import MyBookings from '../src/Components/customer/my_bookings';
 import RoomsList from '../src/Components/customer/RoomsList';
 import VisitRoomPictures from '../src/Components/customer/room_pictures';
 import BookedRooms from '../src/Components/house_owner/booked_rooms';
+import EditHouse from '../src/Components/house_owner/EditHouseForm';
 
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
           <Route path="room_pictures/:room_id" element={<RoomPictures />} />
           <Route path="add_booking_details/:room_id" element={<AddRoomBooking />} />
           <Route path="booked_rooms" element={<BookedRooms />} />
+          <Route path="edit_house/:house_id" element={<EditHouse />} />
           
         </Route>
         

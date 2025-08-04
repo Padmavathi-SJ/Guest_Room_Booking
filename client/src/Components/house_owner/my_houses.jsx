@@ -239,7 +239,7 @@ const MyHouses = () => {
                     {/* Action Buttons - Enhanced */}
                     <div className="flex gap-2">
                       <button
-                        onClick={() => navigate(`/owner/houses/${house.house_id}/edit`)}
+                        onClick={() => navigate(`/owner/edit_house/${house.house_id}`)}
                         className="flex-1 bg-gradient-to-r from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 text-amber-700 py-3 px-4 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all duration-200 border border-amber-200/70 hover:border-amber-300"
                       >
                         <FaEdit className="text-sm" />

@@ -94,7 +94,7 @@ const customerDataToStore = {
 localStorage.setItem('customerData', JSON.stringify(customerDataToStore));
 
       setSuccess('Login successful! Redirecting...');
-      setTimeout(() => navigate('/user'), 1000);
+      setTimeout(() => navigate('/user/dashboard'));
     } else {
       setSuccess('Registration successful! You can now login.');
       setIsLogin(true);
