@@ -6,8 +6,10 @@ import {
   Plus, Filter, Home, Info
 } from 'lucide-react';
 import axios from 'axios';
+import EditProfile from './EditProfile';
 
 const Dashboard = () => {
+  const [showEditProfile, setShowEditProfile] = useState(false);
   const [activeTab, setActiveTab] = useState('bookings');
   const [bookings, setBookings] = useState([]);
   const [bookingHistory, setBookingHistory] = useState([]);
@@ -17,16 +19,17 @@ const Dashboard = () => {
   const [filter, setFilter] = useState('current');
   const [historyFilter, setHistoryFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [customerData, setCustomerData] = useState(null);
   const navigate = useNavigate();
 
-  // Get user data from localStorage
-  const getCustomerData = () => {
-    const customerData = localStorage.getItem('customerData');
-    return customerData ? JSON.parse(customerData) : null;
-  };
-
-  const customerData = getCustomerData();
-  const user_id = customerData?.user_id;
+  useEffect(() => {
+    const data = JSON.parse(localStorage.getItem('customerData'));
+    setCustomerData(data);
+    
+    if (!data) {
+      navigate('/user/login');
+    }
+  }, [navigate]);
 
   // Fetch bookings data
   useEffect(() => {
@@ -35,14 +38,10 @@ const Dashboard = () => {
         setLoading(true);
         setError(null);
         
-        if (!user_id) {
-          setError('User not authenticated');
-          setLoading(false);
-          return;
-        }
+        if (!customerData?.user_id) return;
 
         const response = await axios.get(
-          `http://localhost:5000/api/user/${user_id}/booked_rooms`,
+          `http://localhost:5000/api/user/${customerData.user_id}/booked_rooms`,
           {
             params: { filter },
             headers: {
@@ -62,7 +61,7 @@ const Dashboard = () => {
     if (activeTab === 'bookings') {
       fetchBookings();
     }
-  }, [user_id, filter, activeTab]);
+  }, [customerData, filter, activeTab]);
 
   // Fetch booking history
   useEffect(() => {
@@ -71,14 +70,10 @@ const Dashboard = () => {
         setHistoryLoading(true);
         setError(null);
         
-        if (!user_id) {
-          setError('User not authenticated');
-          setHistoryLoading(false);
-          return;
-        }
+        if (!customerData?.user_id) return;
 
         const response = await axios.get(
-          `http://localhost:5000/api/user/${user_id}/bookings/history`,
+          `http://localhost:5000/api/user/${customerData.user_id}/bookings/history`,
           {
             params: { filter: historyFilter },
             headers: {
@@ -98,20 +93,17 @@ const Dashboard = () => {
     if (activeTab === 'history') {
       fetchBookingHistory();
     }
-  }, [user_id, historyFilter, activeTab]);
+  }, [customerData, historyFilter, activeTab]);
 
-  // Format date
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  // Format time
   const formatTime = (timeString) => {
     return timeString ? timeString.substring(0, 5) : 'N/A';
   };
 
-  // Get booking status badge
   const getStatusBadge = (status) => {
     const statusMap = {
       pending: { color: 'bg-yellow-100 text-yellow-800', icon: <Clock size={14} /> },
@@ -128,20 +120,16 @@ const Dashboard = () => {
     );
   };
 
-  // Filter bookings based on search term
   const filteredBookings = bookings.filter(booking => 
-    booking.room_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    booking.house_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    booking.house_location.toLowerCase().includes(searchTerm.toLowerCase())
+    booking.room_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    booking.house_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    booking.house_location?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Redirect to login if no user data
-  if (!customerData) {
-    navigate('/user/login');
-    return null;
-  }
+  const handleProfileUpdate = (updatedData) => {
+    setCustomerData(updatedData);
+  };
 
-  // Booking card component
   const BookingCard = ({ booking }) => (
     <div className="px-4 py-4 sm:px-6 border-b border-gray-200">
       <div className="flex items-center justify-between">
@@ -229,9 +217,12 @@ const Dashboard = () => {
     </div>
   );
 
+  if (!customerData) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
           <h1 className="text-xl font-bold text-gray-900">My Dashboard</h1>
@@ -246,9 +237,7 @@ const Dashboard = () => {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
-        {/* Dashboard Tabs */}
         <div className="border-b border-gray-200 mb-6">
           <nav className="-mb-px flex space-x-8">
             <button
@@ -272,10 +261,8 @@ const Dashboard = () => {
           </nav>
         </div>
 
-        {/* Dashboard Content */}
         {activeTab === 'bookings' && (
           <div>
-            {/* Bookings Header */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
               <h2 className="text-lg font-medium text-gray-900 mb-2 md:mb-0">My Bookings</h2>
               <div className="flex space-x-3">
@@ -308,7 +295,6 @@ const Dashboard = () => {
               </div>
             </div>
 
-            {/* Bookings Content */}
             {loading ? (
               <div className="flex justify-center items-center h-64">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -423,7 +409,7 @@ const Dashboard = () => {
             </div>
             <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
               <button
-                onClick={() => navigate('/user/settings')}
+                onClick={() => setShowEditProfile(true)}
                 className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
                 <Settings size={16} className="mr-2" />
@@ -433,6 +419,12 @@ const Dashboard = () => {
           </div>
         )}
       </main>
+
+      <EditProfile 
+        show={showEditProfile} 
+        onHide={() => setShowEditProfile(false)} 
+        onUpdateSuccess={handleProfileUpdate}
+      />
     </div>
   );
 };
