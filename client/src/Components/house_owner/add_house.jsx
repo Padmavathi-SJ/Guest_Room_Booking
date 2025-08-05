@@ -8,6 +8,7 @@ const AddHouse = () => {
     owner_id: '',
     house_name: '',
     total_rooms: '',
+    
     house_location: '',
     city: '',
     state: '',
