@@ -7,7 +7,7 @@ import {
 const router = express.Router();
 
 // GET /api/users/:user_id - Get user profile
-router.get('/:user_id', getUserProfile);
+router.get('/get_user/:user_id', getUserProfile);
 
 // PUT /api/users/:user_id - Update user profile
 router.put('/edit/:user_id', updateUserProfile);

@@ -19,12 +19,19 @@ export const getUserDetails = (user_id) => {
 
 export const updateUserDetails = (userId, updateData) => {
   return new Promise((resolve, reject) => {
-    // Don't allow updating user_id or created_at
-    const { user_id, created_at, ...safeUpdateData } = updateData;
+    // Only allow these fields to be updated
+    const allowedFields = ['name', 'email', 'password', 'mobile_num'];
+    const filteredUpdateData = {};
     
+    allowedFields.forEach(field => {
+      if (updateData[field] !== undefined) {
+        filteredUpdateData[field] = updateData[field];
+      }
+    });
+
     const query = 'UPDATE users SET ? WHERE user_id = ?';
     
-    db.query(query, [safeUpdateData, userId], (err, results) => {
+    db.query(query, [filteredUpdateData, userId], (err, results) => {
       if (err) return reject(err);
       resolve(results.affectedRows > 0);
     });

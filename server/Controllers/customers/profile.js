@@ -16,9 +16,6 @@ export const getUserProfile = async (req, res) => {
       });
     }
 
-    // Don't return password in the response
-    delete user.password;
-
     res.status(200).json({
       status: true,
       data: user
@@ -38,7 +35,7 @@ export const updateUserProfile = async (req, res) => {
   const updateData = req.body;
 
   try {
-    // Check if user exists
+    // Check if user exists first
     const user = await getUserDetails(user_id);
     if (!user) {
       return res.status(404).json({
@@ -58,27 +55,17 @@ export const updateUserProfile = async (req, res) => {
       }
     }
 
-    // Don't allow updating user_id or created_at
-    if (updateData.user_id || updateData.created_at) {
-      return res.status(400).json({
-        status: false,
-        message: 'Cannot update user ID or creation date'
-      });
-    }
-
-    // Update the user details
-    const isUpdated = await updateUserDetails(user_id, updateData);
-    if (!isUpdated) {
+    const updated = await updateUserDetails(user_id, updateData);
+    
+    if (!updated) {
       return res.status(500).json({
         status: false,
         message: 'Failed to update user details'
       });
     }
 
-    // Get updated user details
     const updatedUser = await getUserDetails(user_id);
-    delete updatedUser.password;
-
+    
     res.status(200).json({
       status: true,
       message: 'User details updated successfully',
