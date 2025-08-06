@@ -26,3 +26,12 @@ pool.getConnection((err, connection) => {
 })
 
 export default pool;
+
+
+```
+host=localhost
+user=root
+password=padmacs253
+database=guest_room_booking
+PORT=5000
+```
